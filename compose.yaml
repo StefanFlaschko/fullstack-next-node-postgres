@@ -3,7 +3,7 @@ version: '3.9'
 services:
   frontend:
     container_name: frontend
-    image: frontend
+    image: pg_next/frontend
     build:
       context: ./frontend
       dockerfile: frontend.dockerfile
@@ -14,9 +14,10 @@ services:
     restart: always
     depends_on:
       - backend
+
   backend:
     container_name: backend
-    image: backend
+    image: pg_next/backend
     build:
       context: ./backend
       dockerfile: backend.dockerfile
@@ -24,6 +25,12 @@ services:
       - 4000:4000
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres?schema=public
+    # command: sh -c "ls && cd /.. && ls "
+    # command: sh -c " ls && cat package.json && npm run start && npx prisma migrate dev --name init"
+    command: /start.sh
+    depends_on:
+      - db
+
   db:
     container_name: db
     image: postgres:12
